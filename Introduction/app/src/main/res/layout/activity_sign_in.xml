@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignInActivity">
+
+    <ImageView
+        android:id="@+id/logo_IV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/ic_signin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        style="@style/Action.L_dark"
+        android:id="@+id/id_TV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="5dp"
+        android:text="아이디"
+        app:layout_constraintEnd_toEndOf="@+id/logo_IV"
+        app:layout_constraintStart_toStartOf="@+id/logo_IV"
+        app:layout_constraintTop_toBottomOf="@+id/logo_IV" />
+
+    <EditText
+        style="@style/Action.M_dark"
+        android:id="@+id/id_ET"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="15dp"
+        android:background="@drawable/edit_text_sign_in"
+        android:hint="아이디를 입력하세요"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="@+id/logo_IV"
+        app:layout_constraintStart_toStartOf="@+id/logo_IV"
+        app:layout_constraintTop_toBottomOf="@+id/id_TV" />
+
+    <TextView
+        style="@style/Action.L_dark"
+        android:id="@+id/pwd_TV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="5dp"
+        android:text="비밀번호"
+        app:layout_constraintEnd_toEndOf="@+id/logo_IV"
+        app:layout_constraintStart_toStartOf="@+id/logo_IV"
+        app:layout_constraintTop_toBottomOf="@+id/id_ET" />
+
+    <EditText
+        style="@style/Action.M_dark"
+        android:id="@+id/pwd_ET"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="15dp"
+        android:background="@drawable/edit_text_sign_in"
+        android:hint="비밀번호를 입력하세요"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/logo_IV"
+        app:layout_constraintStart_toStartOf="@+id/logo_IV"
+        app:layout_constraintTop_toBottomOf="@+id/pwd_TV" />
+
+    <android.widget.Button
+        android:id="@+id/signin_btn"
+        style="@style/Action.M_light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_selector"
+        android:text="로그인"
+        app:layout_constraintBottom_toTopOf="@+id/signup_btn"
+        app:layout_constraintEnd_toEndOf="@+id/signup_btn"
+        app:layout_constraintStart_toStartOf="@+id/signup_btn" />
+
+    <Button
+        android:id="@+id/signup_btn"
+        style="@style/Action.M_light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/button_selector"
+        android:text="회원가입"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
