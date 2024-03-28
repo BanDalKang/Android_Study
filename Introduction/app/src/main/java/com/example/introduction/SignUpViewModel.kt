@@ -21,15 +21,62 @@ class SignUpViewModel : ViewModel() {
     val password: LiveData<String>
         get() =_password
 
-    fun isStrongPassword(password: String): Boolean {
-        // 대문자, 소문자, 특수문자, 숫자를 포함하는 정규식
-        val pattern = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,15}$")
-        return pattern.matches(password)
+    private val _passwordCheck = MutableLiveData<String>()
+    val passwordCheck: LiveData<String>
+        get() =_passwordCheck
+
+    private val _isPasswordValid = MutableLiveData<Boolean>()
+    val isPasswordValid: LiveData<Boolean>
+        get() = _isPasswordValid
+
+    private val _isPasswordMatch = MutableLiveData<Boolean>()
+    val isPasswordMatch: LiveData<Boolean>
+        get() = _isPasswordMatch
+
+    private val _isSignUpEnabled = MutableLiveData<Boolean>()
+    val isSignUpEnabled: LiveData<Boolean>
+        get() = _isSignUpEnabled
+
+    init {
+        _isPasswordValid.value = true
+        _isPasswordMatch.value = true
+        _isSignUpEnabled.value = false
     }
 
-    fun setUserValue(name: String, id: String, password: String) {
+    fun setName(name: String) {
         _name.value = name
-        _id.value = id
-        _password.value = password
     }
+    fun setId(id: String) {
+        _id.value = id
+    }
+    fun setPassword(password: String) {
+        _password.value = password
+        isPasswordValid(password)
+    }
+    fun setPasswordCheck(passwordCheck: String) {
+        _passwordCheck.value = passwordCheck
+        _isPasswordMatch.value = (passwordCheck==_password.value)
+    }
+
+    private fun isPasswordValid(password: String) {
+        // 대문자, 소문자, 특수문자, 숫자를 포함하는 정규식
+        val pattern = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,15}$")
+        _isPasswordValid.value = pattern.matches(password)
+    }
+
+    fun updateSignUpButtonState() {
+        val name = _name.value
+        val id = _id.value
+        val password = _password.value
+        val passwordMatch = _isPasswordMatch.value
+        val passwordValid = _isPasswordValid.value
+
+        // 모든 필드가 비어있지 않고, 비밀번호가 강력하면 회원가입 버튼 활성화
+        _isSignUpEnabled.value = !name.isNullOrBlank() &&
+                !id.isNullOrBlank() &&
+                !password.isNullOrBlank() &&
+                passwordValid == true &&
+                passwordMatch == true
+    }
+
 }
