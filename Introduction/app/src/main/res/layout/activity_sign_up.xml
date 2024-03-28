@@ -115,7 +115,7 @@
         android:id="@+id/pwd_check_TV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:text="비밀번호 확인"
         android:paddingLeft="5dp"
         app:layout_constraintEnd_toEndOf="@+id/name_TV"
