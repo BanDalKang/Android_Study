@@ -33,14 +33,9 @@ class SignUpViewModel : ViewModel() {
     val isPasswordMatch: LiveData<Boolean>
         get() = _isPasswordMatch
 
-    private val _isSignUpEnabled = MutableLiveData<Boolean>()
-    val isSignUpEnabled: LiveData<Boolean>
-        get() = _isSignUpEnabled
-
     init {
         _isPasswordValid.value = true
         _isPasswordMatch.value = true
-        _isSignUpEnabled.value = false
     }
 
     fun setName(name: String) {
@@ -58,13 +53,13 @@ class SignUpViewModel : ViewModel() {
         _isPasswordMatch.value = (passwordCheck==_password.value)
     }
 
+    private val pattern = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,15}$")
     private fun isPasswordValid(password: String) {
         // 대문자, 소문자, 특수문자, 숫자를 포함하는 정규식
-        val pattern = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,15}$")
         _isPasswordValid.value = pattern.matches(password)
     }
 
-    fun updateSignUpButtonState() {
+    fun updateSignUpButtonState(): Boolean {
         val name = _name.value
         val id = _id.value
         val password = _password.value
@@ -72,11 +67,13 @@ class SignUpViewModel : ViewModel() {
         val passwordValid = _isPasswordValid.value
 
         // 모든 필드가 비어있지 않고, 비밀번호가 강력하면 회원가입 버튼 활성화
-        _isSignUpEnabled.value = !name.isNullOrBlank() &&
+        val isSignUpEnabled = !name.isNullOrBlank() &&
                 !id.isNullOrBlank() &&
                 !password.isNullOrBlank() &&
                 passwordValid == true &&
                 passwordMatch == true
+
+        return isSignUpEnabled
     }
 
 }

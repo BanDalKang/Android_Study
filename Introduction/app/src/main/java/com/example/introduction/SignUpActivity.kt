@@ -3,15 +3,12 @@ package com.example.introduction
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 class SignUpActivity : AppCompatActivity() {
@@ -21,27 +18,21 @@ class SignUpActivity : AppCompatActivity() {
     private val nameEt: EditText by lazy {
         findViewById(R.id.name_ET)
     }
-
     private val idEt: EditText by lazy {
         findViewById(R.id.id_ET)
     }
-
     private val pwdEt: EditText by lazy {
         findViewById(R.id.pwd_ET)
     }
-
     private val pwdcheckEt: EditText by lazy {
         findViewById(R.id.pwd_check_ET)
     }
-
-    private val pwd_warningTV: TextView by lazy {
+    private val pwdWarningTv: TextView by lazy {
         findViewById(R.id.pwd_warning_TV)
     }
-
-    private val pwd_check_warningTV: TextView by lazy {
+    private val pwdCheckWarningTv: TextView by lazy {
         findViewById(R.id.pwd_check_warning_TV)
     }
-
     private val signupBtn: Button by lazy {
         findViewById(R.id.signup_btn)
     }
@@ -56,18 +47,18 @@ class SignUpActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
 
         viewModel.isPasswordValid.observe(this) { isPasswordValid ->
-            pwd_warningTV.visibility = if (isPasswordValid) {
-                View.GONE // 비밀번호가 강력한 경우 텍스트뷰 숨기기
+            pwdWarningTv.visibility = if (isPasswordValid) {
+                View.GONE
             } else {
-                View.VISIBLE // 비밀번호가 강력하지 않은 경우 텍스트뷰 표시
+                View.VISIBLE
             }
         }
 
         viewModel.isPasswordMatch.observe(this) { isPasswordMatch ->
-            pwd_check_warningTV.visibility = if (isPasswordMatch) {
-                View.GONE // 비밀번호가 강력한 경우 텍스트뷰 숨기기
+            pwdCheckWarningTv.visibility = if (isPasswordMatch) {
+                View.GONE
             } else {
-                View.VISIBLE // 비밀번호가 강력하지 않은 경우 텍스트뷰 표시
+                View.VISIBLE
             }
         }
 
@@ -94,24 +85,20 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun signUpButtonClick() {
-        val name = viewModel.name.value
-        val id = viewModel.id.value
-        val pwd = viewModel.password.value
+        val name = nameEt.text.toString()
+        val id = idEt.text.toString()
+        val pwd = pwdEt.text.toString()
 
-        viewModel.updateSignUpButtonState()
-
-        viewModel.isSignUpEnabled.observe(this) { isSignUpEnabled ->
-            if (isSignUpEnabled) {
-                Toast.makeText(this@SignUpActivity, "회원가입 성공\n이름: $name\n아이디: $id\n비밀번호: $pwd", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
-                intent.putExtra("id", id)
-                intent.putExtra("pwd", pwd)
-                // 이전 액티비티로 돌아가기 전에 현재 액티비티에서 처리한 결과를 담은 인텐트를 설정
-                setResult(RESULT_OK, intent)
-                finish()
-            } else {
-                Toast.makeText(this@SignUpActivity, "입력되지 않은 정보가 있습니다.", Toast.LENGTH_SHORT).show()
-            }
+        if (viewModel.updateSignUpButtonState()) {
+            Toast.makeText(this@SignUpActivity, "회원가입 성공\n이름: $name\n아이디: $id\n비밀번호: $pwd", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
+            intent.putExtra("id", id)
+            intent.putExtra("pwd", pwd)
+            // 이전 액티비티로 돌아가기 전에 현재 액티비티에서 처리한 결과를 담은 인텐트를 설정
+            setResult(RESULT_OK, intent)
+            if (!isFinishing) finish()
+        } else {
+            Toast.makeText(this@SignUpActivity, "입력되지 않은 정보가 있습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 }
