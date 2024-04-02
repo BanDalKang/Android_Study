@@ -62,22 +62,32 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
 
+        // EditText들의 포커스가 변경될 때 ViewModel에 값을 업데이트
+        val editTextList = listOf(nameEt, idEt, pwdEt, pwdcheckEt)
+        editTextList.forEach { editText ->
+            editText.setOnFocusChangeListener { view, hasFocus ->
+                if (!hasFocus) { // 포커스를 잃은 경우에만 처리
+                    val text = (view as EditText).text.toString()
+                    when (view) {
+                        nameEt -> viewModel.setName(text)
+                        idEt -> viewModel.setId(text)
+                        pwdEt -> viewModel.setPassword(text)
+                        pwdcheckEt -> viewModel.setPasswordCheck(text)
+                    }
+                }
+            }
+        }
         // EditText들의 텍스트가 변경될 때마다 ViewModel에 값을 업데이트
-        nameEt.addTextChangedListener {
-            viewModel.setName(it.toString())
-        }
-
-        idEt.addTextChangedListener {
-            viewModel.setId(it.toString())
-        }
-
-        pwdEt.addTextChangedListener {
-            viewModel.setPassword(it.toString())
-        }
-
-        pwdcheckEt.addTextChangedListener {
-            viewModel.setPasswordCheck(it.toString())
-        }
+        /*editTextList.forEach { editText ->
+            editText.addTextChangedListener {
+                when (editText) {
+                    nameEt -> viewModel.setName(it.toString())
+                    idEt -> viewModel.setId(it.toString())
+                    pwdEt -> viewModel.setPassword(it.toString())
+                    pwdcheckEt -> viewModel.setPasswordCheck(it.toString())
+                }
+            }
+        }*/
 
         signupBtn.setOnClickListener {
             signUpButtonClick()

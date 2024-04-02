@@ -23,10 +23,11 @@
         <entry key="..\:/Users/guswj/Desktop/nbCamp/Android_Project/Introduction/app/src/main/res/layout/activity_sign_in.xml" value="0.2" />
         <entry key="..\:/Users/guswj/Desktop/nbCamp/Android_Project/Introduction/app/src/main/res/layout/activity_sign_up.xml" value="0.2" />
         <entry key="..\:/Users/guswj/Desktop/nbCamp/Android_Project/Introduction/app/src/main/res/layout/social_sign_in.xml" value="0.1" />
+        <entry key="..\:/Users/guswj/Desktop/nbCamp/Android_Study/Introduction/app/src/main/res/layout/activity_sign_up.xml" value="0.1" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8 (3)" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
