@@ -50,12 +50,12 @@ class SignUpViewModel : ViewModel() {
     }
     fun setPasswordCheck(passwordCheck: String) {
         _passwordCheck.value = passwordCheck
-        _isPasswordMatch.value = (passwordCheck==_password.value)
+        _isPasswordMatch.value = (passwordCheck ==_password.value)
     }
 
+    // 대문자, 소문자, 특수문자, 숫자를 포함하는 정규식
     private val pattern = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*+=])(?=\\S+$).{8,15}$")
     private fun isPasswordValid(password: String) {
-        // 대문자, 소문자, 특수문자, 숫자를 포함하는 정규식
         _isPasswordValid.value = pattern.matches(password)
     }
 
@@ -63,6 +63,7 @@ class SignUpViewModel : ViewModel() {
         val name = _name.value
         val id = _id.value
         val password = _password.value
+        val passwordCheck = _passwordCheck.value
         val passwordMatch = _isPasswordMatch.value
         val passwordValid = _isPasswordValid.value
 
@@ -70,6 +71,7 @@ class SignUpViewModel : ViewModel() {
         val isSignUpEnabled = !name.isNullOrBlank() &&
                 !id.isNullOrBlank() &&
                 !password.isNullOrBlank() &&
+                !passwordCheck.isNullOrBlank() &&
                 passwordValid == true &&
                 passwordMatch == true
 
