@@ -18,7 +18,7 @@
 
     <TextView
         style="@style/Action.L_dark"
-        android:id="@+id/id_TV"
+        android:id="@+id/email_TV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -30,7 +30,7 @@
 
     <EditText
         style="@style/Action.M_dark"
-        android:id="@+id/id_ET"
+        android:id="@+id/email_ET"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
@@ -40,7 +40,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="@+id/logo_IV"
         app:layout_constraintStart_toStartOf="@+id/logo_IV"
-        app:layout_constraintTop_toBottomOf="@+id/id_TV" />
+        app:layout_constraintTop_toBottomOf="@+id/email_TV" />
 
     <TextView
         style="@style/Action.L_dark"
@@ -52,7 +52,7 @@
         android:text="비밀번호"
         app:layout_constraintEnd_toEndOf="@+id/logo_IV"
         app:layout_constraintStart_toStartOf="@+id/logo_IV"
-        app:layout_constraintTop_toBottomOf="@+id/id_ET" />
+        app:layout_constraintTop_toBottomOf="@+id/email_ET" />
 
     <EditText
         style="@style/Action.M_dark"
