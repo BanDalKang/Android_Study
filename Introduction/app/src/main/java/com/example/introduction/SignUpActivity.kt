@@ -18,8 +18,8 @@ class SignUpActivity : AppCompatActivity() {
     private val nameEt: EditText by lazy {
         findViewById(R.id.name_ET)
     }
-    private val idEt: EditText by lazy {
-        findViewById(R.id.id_ET)
+    private val emailEt: EditText by lazy {
+        findViewById(R.id.email_ET)
     }
     private val pwdEt: EditText by lazy {
         findViewById(R.id.pwd_ET)
@@ -27,13 +27,19 @@ class SignUpActivity : AppCompatActivity() {
     private val pwdcheckEt: EditText by lazy {
         findViewById(R.id.pwd_check_ET)
     }
+    private val nameWarningTv: TextView by lazy {
+        findViewById(R.id.name_warning_TV)
+    }
+    private val emailWarningTv: TextView by lazy {
+        findViewById(R.id.email_warning_TV)
+    }
     private val pwdWarningTv: TextView by lazy {
         findViewById(R.id.pwd_warning_TV)
     }
     private val pwdCheckWarningTv: TextView by lazy {
         findViewById(R.id.pwd_check_warning_TV)
     }
-    private val signupBtn: Button by lazy {
+    private val signUpBtn: Button by lazy {
         findViewById(R.id.signup_btn)
     }
 
@@ -41,62 +47,60 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-        // ViewModelProvider를 통해 ViewModel 가져오기
-        // LifeCycle을 가진 owner를 넣는다(this==현재 Activity)
-        // get()에 가져오고 싶은 ViewModel클래스를 넣으면 완료
         viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
 
-        viewModel.isPasswordValid.observe(this) { isPasswordValid ->
-            pwdWarningTv.visibility = if (isPasswordValid) {
-                View.GONE
-            } else {
-                View.VISIBLE
+        val observerList = listOf(
+            viewModel.isNameValid to nameWarningTv,
+            viewModel.isEmailValid to emailWarningTv,
+            viewModel.isPasswordValid to pwdWarningTv,
+            viewModel.isPasswordMatch to pwdCheckWarningTv
+        )
+
+        observerList.forEach { (liveData, textView) ->
+            liveData.observe(this) { isValid ->
+                textView.visibility = if (isValid) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
             }
         }
 
-        viewModel.isPasswordMatch.observe(this) { isPasswordMatch ->
-            pwdCheckWarningTv.visibility = if (isPasswordMatch) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-        }
-
-        // EditText들의 포커스가 변경될 때 ViewModel에 값을 업데이트
-        val editTextList = listOf(nameEt, idEt, pwdEt, pwdcheckEt)
+        // EditText들의 텍스트가 변경될 때마다 ViewModel에 값을 업데이트
+        val editTextList = listOf(nameEt, emailEt, pwdEt, pwdcheckEt)
         editTextList.forEach { editText ->
+            editText.addTextChangedListener {
+                when (editText) {
+                    nameEt -> viewModel.setName(it.toString())
+                    emailEt -> viewModel.setId(it.toString())
+                    pwdEt -> viewModel.setPassword(it.toString())
+                    pwdcheckEt -> viewModel.setPasswordCheck(it.toString())
+                }
+            }
+        }
+        // EditText들의 포커스가 변경될 때 ViewModel에 값을 업데이트
+        /*editTextList.forEach { editText ->
             editText.setOnFocusChangeListener { view, hasFocus ->
                 if (!hasFocus) { // 포커스를 잃은 경우에만 처리
                     val text = (view as EditText).text.toString()
                     when (view) {
                         nameEt -> viewModel.setName(text)
-                        idEt -> viewModel.setId(text)
+                        emailEt -> viewModel.setId(text)
                         pwdEt -> viewModel.setPassword(text)
                         pwdcheckEt -> viewModel.setPasswordCheck(text)
                     }
                 }
             }
-        }
-        // EditText들의 텍스트가 변경될 때마다 ViewModel에 값을 업데이트
-        /*editTextList.forEach { editText ->
-            editText.addTextChangedListener {
-                when (editText) {
-                    nameEt -> viewModel.setName(it.toString())
-                    idEt -> viewModel.setId(it.toString())
-                    pwdEt -> viewModel.setPassword(it.toString())
-                    pwdcheckEt -> viewModel.setPasswordCheck(it.toString())
-                }
-            }
         }*/
 
-        signupBtn.setOnClickListener {
+        signUpBtn.setOnClickListener {
             signUpButtonClick()
         }
     }
 
     private fun signUpButtonClick() {
         val name = nameEt.text.toString()
-        val id = idEt.text.toString()
+        val id = emailEt.text.toString()
         val pwd = pwdEt.text.toString()
 
         if (viewModel.updateSignUpButtonState()) {

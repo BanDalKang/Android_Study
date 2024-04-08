@@ -13,7 +13,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         val nameText: TextView = findViewById(R.id.name_TV)
-        val idText: TextView = findViewById(R.id.id_TV)
+        val idText: TextView = findViewById(R.id.email_TV)
         val ageText: TextView = findViewById(R.id.age_TV)
         val mbtiText: TextView = findViewById(R.id.mbti_TV)
         val finishButton: Button = findViewById(R.id.finish_btn)
