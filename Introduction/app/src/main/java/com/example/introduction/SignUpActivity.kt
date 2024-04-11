@@ -1,118 +1,158 @@
 package com.example.introduction
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
+import com.example.introduction.databinding.ActivitySignUpBinding
+import androidx.activity.viewModels
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModelProvider
 
 class SignUpActivity : AppCompatActivity() {
-    // var은 lateinit
-    private lateinit var viewModel: SignUpViewModel
-    // val은 lazy
-    private val nameEt: EditText by lazy {
-        findViewById(R.id.name_ET)
+    companion object {
+        fun newIntent(
+            context: Context,
+        ): Intent = Intent(context, SignUpActivity()::class.java)
     }
-    private val emailEt: EditText by lazy {
-        findViewById(R.id.email_ET)
+
+    private val binding: ActivitySignUpBinding by lazy {
+        ActivitySignUpBinding.inflate(layoutInflater)
     }
-    private val pwdEt: EditText by lazy {
-        findViewById(R.id.pwd_ET)
-    }
-    private val pwdcheckEt: EditText by lazy {
-        findViewById(R.id.pwd_check_ET)
-    }
-    private val nameWarningTv: TextView by lazy {
-        findViewById(R.id.name_warning_TV)
-    }
-    private val emailWarningTv: TextView by lazy {
-        findViewById(R.id.email_warning_TV)
-    }
-    private val pwdWarningTv: TextView by lazy {
-        findViewById(R.id.pwd_warning_TV)
-    }
-    private val pwdCheckWarningTv: TextView by lazy {
-        findViewById(R.id.pwd_check_warning_TV)
-    }
-    private val signUpBtn: Button by lazy {
-        findViewById(R.id.signup_btn)
-    }
+
+    private val viewModel: SignUpViewModel by viewModels()
+
+    private val editTexts
+        get() = with(binding) {
+            listOf(
+                nameET,
+                emailET,
+                pwdET,
+                pwdCheckET
+            )
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+        setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
+        initView()
+        initViewModel()
+    }
 
-        val observerList = listOf(
-            viewModel.isNameValid to nameWarningTv,
-            viewModel.isEmailValid to emailWarningTv,
-            viewModel.isPasswordValid to pwdWarningTv,
-            viewModel.isPasswordMatch to pwdCheckWarningTv
-        )
-
-        observerList.forEach { (liveData, textView) ->
-            liveData.observe(this) { isValid ->
-                textView.visibility = if (isValid) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
-            }
-        }
-
-        // EditText들의 텍스트가 변경될 때마다 ViewModel에 값을 업데이트
-        val editTextList = listOf(nameEt, emailEt, pwdEt, pwdcheckEt)
-        editTextList.forEach { editText ->
+    private fun initView() {
+        editTexts.forEach { editText ->
             editText.addTextChangedListener {
-                when (editText) {
-                    nameEt -> viewModel.setName(it.toString())
-                    emailEt -> viewModel.setId(it.toString())
-                    pwdEt -> viewModel.setPassword(it.toString())
-                    pwdcheckEt -> viewModel.setPasswordCheck(it.toString())
+                editText.checkValidElements()
+                viewModel.isConfirmButtonEnable()
+            }
+
+            editText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus.not()) {
+                    editText.checkValidElements()
+                    //viewModel.isConfirmButtonEnable()
                 }
             }
         }
-        // EditText들의 포커스가 변경될 때 ViewModel에 값을 업데이트
-        /*editTextList.forEach { editText ->
-            editText.setOnFocusChangeListener { view, hasFocus ->
-                if (!hasFocus) { // 포커스를 잃은 경우에만 처리
-                    val text = (view as EditText).text.toString()
-                    when (view) {
-                        nameEt -> viewModel.setName(text)
-                        emailEt -> viewModel.setId(text)
-                        pwdEt -> viewModel.setPassword(text)
-                        pwdcheckEt -> viewModel.setPasswordCheck(text)
-                    }
-                }
-            }
-        }*/
+        binding.signupBtn.setOnClickListener(){
+            val name = binding.nameET.text.toString()
+            val id = binding.emailET.text.toString()
+            val password = binding.pwdET.text.toString()
 
-        signUpBtn.setOnClickListener {
-            signUpButtonClick()
+            val member = SignUpMember(
+                name,
+                id,
+                password
+            )
+            viewModel.onClick(member)
+            val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
+            intent.putExtra("id", id)
+            intent.putExtra("pwd", password)
+            setResult(RESULT_OK, intent)
+            if (!isFinishing) finish()
         }
     }
 
-    private fun signUpButtonClick() {
-        val name = nameEt.text.toString()
-        val id = emailEt.text.toString()
-        val pwd = pwdEt.text.toString()
+    private fun initViewModel() = with(viewModel) {
 
-        if (viewModel.updateSignUpButtonState()) {
-            Toast.makeText(this@SignUpActivity, "회원가입 성공\n이름: $name\n아이디: $id\n비밀번호: $pwd", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
-            intent.putExtra("id", id)
-            intent.putExtra("pwd", pwd)
-            // 이전 액티비티로 돌아가기 전에 현재 액티비티에서 처리한 결과를 담은 인텐트를 설정
-            setResult(RESULT_OK, intent)
-            if (!isFinishing) finish()
-        } else {
-            Toast.makeText(this@SignUpActivity, "입력되지 않은 정보가 있습니다.", Toast.LENGTH_SHORT).show()
+        errorUiState.observe(this@SignUpActivity) { uiState ->
+            with(binding) {
+                // 이름
+                nameWarningTV.visibility = when (uiState.name) {
+                    SignUpValidUiState.Name -> View.VISIBLE
+                    else -> View.GONE
+                }
+
+                // 이메일
+                emailWarningTV.setText(
+                    when (uiState.emailId) {
+                        SignUpValidUiState.EmailBlank -> R.string.sign_up_email_error_blank
+                        SignUpValidUiState.Emailvalid -> R.string.sign_up_email_error
+                        else -> R.string.sign_up_pass
+                    }
+                )
+                emailWarningTV.visibility = when (uiState.emailId) {
+                    SignUpValidUiState.EmailBlank -> View.VISIBLE
+                    SignUpValidUiState.Emailvalid -> View.VISIBLE
+                    else -> View.GONE
+                }
+
+                // 비밀번호 입력
+                pwdWarningTV.setText(
+                    when (uiState.passwordInput) {
+                        SignUpValidUiState.PasswordInputLength -> R.string.sign_up_password_error_length
+                        SignUpValidUiState.PasswordInputSpecialCharacters -> R.string.sign_up_password_error_special
+                        SignUpValidUiState.PasswordInputUpperCase -> R.string.sign_up_password_error_upper
+                        else -> R.string.sign_up_pass
+                    }
+                )
+                pwdWarningTV.visibility = when (uiState.passwordInput) {
+                    SignUpValidUiState.PasswordInputLength -> View.VISIBLE
+                    SignUpValidUiState.PasswordInputSpecialCharacters -> View.VISIBLE
+                    SignUpValidUiState.PasswordInputUpperCase -> View.VISIBLE
+                    else -> View.GONE
+                }
+
+                // 비밀번호 확인
+                pwdCheckWarningTV.visibility = when (uiState.passwordConfirm) {
+                    SignUpValidUiState.PasswordConfirm -> View.VISIBLE
+                    else -> View.GONE
+                }
+
+                // 버튼
+                signupBtn.isEnabled = uiState.enabled
+                Log.d("TAG", "uiState.enabled: "+uiState.enabled)
+            }
+        }
+
+        event.observe(this@SignUpActivity) { event ->
+            when (event) {
+                is SignUpEvent.SignUpSuccess -> {
+                    Toast.makeText(
+                        this@SignUpActivity,
+                        event.member.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    // 각 항목의 유효성 검사를 처리
+    private fun EditText.checkValidElements() = with(binding) {
+        when (this@checkValidElements) {
+            nameET -> viewModel.checkValidName(nameET.text.toString())
+            emailET -> viewModel.checkValidEmail(emailET.text.toString())
+            pwdET -> viewModel.checkValidPasswordInput(pwdET.text.toString())
+            pwdCheckET -> viewModel.checkValidPasswordConfirm(
+                pwdET.text.toString(),
+                pwdCheckET.text.toString(),
+            )
+
+            else -> Unit
         }
     }
 }

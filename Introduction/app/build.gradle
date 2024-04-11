@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -9,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.example.introduction"
         minSdk 30
-        targetSdk 32
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -29,14 +31,15 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    // 데이터 바인딩
+    // 뷰 바인딩
     buildFeatures {
-        dataBinding true
+        viewBinding = true
     }
 }
 
 dependencies {
-
+    implementation 'androidx.activity:activity-ktx:1.8.2'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
